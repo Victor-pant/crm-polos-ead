@@ -130,19 +130,22 @@ curl -X POST -H "X-API-Token: SEU_TOKEN" -H "Content-Type: application/json" \
 
 ## 5. Deploy em nuvem (Render — gratuito)
 
-1. Suba o projeto para um repositório no GitHub (passo a passo abaixo).
-2. Crie uma conta em [render.com](https://render.com) e clique em **New +
-   → Web Service**, conectando o repositório.
-3. Configure:
-   - **Build Command:** `pip install -r requirements.txt`
-   - **Start Command:** `gunicorn app:app` (já está no `Procfile`)
-4. Em **Environment**, adicione as variáveis do `.env.example`
-   (`SECRET_KEY`, `API_TOKEN`, etc.). Para produção, troque
-   `DATABASE_URL` por um banco PostgreSQL gratuito do próprio Render, ex.:
-   `postgresql://usuario:senha@host/banco` (é só criar um "PostgreSQL" no
-   Render e copiar a "Internal Database URL").
-5. Depois do primeiro deploy, rode `python seed.py` uma vez pelo shell do
-   Render (aba "Shell") se quiser os dados de demonstração.
+O repositório já traz um `render.yaml` (Blueprint):
+
+1. Em [render.com](https://render.com), clique em **New + → Blueprint** e
+   selecione este repositório.
+2. Confirme. O Render cria o Web Service `crm-polos-ead` com:
+   - **Build:** `pip install -r requirements.txt`
+   - **Start:** `gunicorn app:app --preload --workers 2 --bind 0.0.0.0:$PORT`
+   - `SECRET_KEY` e `API_TOKEN` gerados automaticamente
+   - `AUTO_SEED=1`: na primeira execução, o banco vazio é populado com os
+     dados fictícios de demonstração (login `maria@unoeste-pi.com.br` / `123456`).
+
+> No plano gratuito o disco é temporário: o SQLite volta aos dados de
+> demonstração a cada novo deploy/reinício, e o serviço "dorme" após 15 min
+> sem acesso (o primeiro acesso depois disso leva ~1 min). Para guardar dados
+> reais, crie um PostgreSQL no Render e defina `DATABASE_URL` com a
+> "Internal Database URL" — nenhuma mudança de código é necessária.
 
 ---
 

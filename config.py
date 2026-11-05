@@ -24,6 +24,8 @@ def _resolver_database_uri():
             caminho = os.path.join(BASE_DIR, caminho)
         return f"sqlite:///{caminho}"
 
+    if url.startswith("postgres://"):  # formato antigo usado por alguns provedores
+        url = "postgresql://" + url[len("postgres://"):]
     return url  # outros bancos (PostgreSQL, MySQL etc.) usam a URL como está
 
 

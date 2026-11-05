@@ -31,6 +31,11 @@ def create_app(config_class=Config):
 
     with app.app_context():
         db.create_all()
+        # Em ambientes de demonstração (ex.: Render), AUTO_SEED=1 popula um
+        # banco vazio com dados fictícios para o sistema já abrir com exemplos.
+        if os.environ.get("AUTO_SEED") == "1" and not Usuario.query.first():
+            from demo_data import popular_demo
+            popular_demo()
 
     return app
 
