@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-sm-8 col-md-5 col-lg-4">
+    <h1 class="h3 mb-4 text-center">Entrar no CRM</h1>
+    <form method="post" novalidate>
+      <div class="mb-3">
+        <label for="email" class="form-label">E-mail</label>
+        <input type="email" class="form-control" id="email" name="email" required autofocus
+               aria-describedby="emailAjuda">
+        <div id="emailAjuda" class="form-text">Use o e-mail cadastrado pelo administrador do CRM.</div>
+      </div>
+      <div class="mb-3">
+        <label for="senha" class="form-label">Senha</label>
+        <input type="password" class="form-control" id="senha" name="senha" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Entrar</button>
+    </form>
+    <p class="text-muted mt-3 small text-center">
+      Dados de acesso de demonstração: <strong>maria@unoeste-pi.com.br</strong> / <strong>123456</strong>
+    </p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Leads{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">Leads</h1>
+
+<form method="get" class="row g-2 mb-4" aria-label="Filtros de leads">
+  <div class="col-12 col-md-3">
+    <label for="busca" class="form-label visually-hidden">Buscar por nome ou telefone</label>
+    <input type="search" class="form-control" id="busca" name="busca" placeholder="Buscar por nome ou telefone"
+           value="{{ filtro_busca }}">
+  </div>
+  <div class="col-6 col-md-3">
+    <label for="status" class="form-label visually-hidden">Status</label>
+    <select class="form-select" id="status" name="status">
+      <option value="">Todos os status</option>
+      {% for s in status_opcoes %}
+        <option value="{{ s }}" {% if filtro_status == s %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-6 col-md-3">
+    <label for="polo_id" class="form-label visually-hidden">Polo</label>
+    <select class="form-select" id="polo_id" name="polo_id">
+      <option value="">Todos os polos</option>
+      {% for polo in polos %}
+        <option value="{{ polo.id }}" {% if filtro_polo|string == polo.id|string %}selected{% endif %}>{{ polo.nome }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-6 col-md-2">
+    <label for="origem" class="form-label visually-hidden">Origem</label>
+    <select class="form-select" id="origem" name="origem">
+      <option value="">Todas as origens</option>
+      {% for o in origem_opcoes %}
+        <option value="{{ o }}" {% if filtro_origem == o %}selected{% endif %}>{{ o }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-6 col-md-1">
+    <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+  </div>
+</form>
+
+<div class="table-responsive">
+<table class="table table-hover align-middle">
+  <caption class="visually-hidden">
+    Lista de leads priorizada automaticamente: atrasados e retornos de hoje aparecem primeiro.
+  </caption>
+  <thead>
+    <tr>
+      <th scope="col">Prioridade</th>
+      <th scope="col">Nome</th>
+      <th scope="col">Telefone</th>
+      <th scope="col">Status</th>
+      <th scope="col">Temperatura</th>
+      <th scope="col">Polo</th>
+      <th scope="col">Retorno</th>
+      <th scope="col"><span class="visually-hidden">Ações</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for lead in leads %}
+    <tr>
+      <td>
+        {% if lead.esta_atrasado %}
+          <span class="badge text-bg-danger">Atrasado</span>
+        {% elif lead.retorno_e_hoje %}
+          <span class="badge text-bg-warning">Hoje</span>
+        {% elif lead.status == "Novo" %}
+          <span class="badge text-bg-info">Novo</span>
+        {% else %}
+          <span class="badge text-bg-secondary">—</span>
+        {% endif %}
+      </td>
+      <td>{{ lead.nome }}</td>
+      <td>{{ lead.telefone }}</td>
+      <td>{{ lead.status }}</td>
+      <td>{{ lead.temperatura }}</td>
+      <td>{{ lead.polo.nome if lead.polo else "—" }}</td>
+      <td>{{ lead.proxima_acao_em.strftime("%d/%m/%Y") if lead.proxima_acao_em else "—" }}</td>
+      <td><a href="{{ url_for('leads.detalhe', lead_id=lead.id) }}" class="btn btn-sm btn-outline-primary">
+        Abrir<span class="visually-hidden"> lead de {{ lead.nome }}</span>
+      </a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="8" class="text-center text-muted py-4">Nenhum lead encontrado com os filtros atuais.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

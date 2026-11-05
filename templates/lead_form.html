@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Novo lead{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">Novo lead</h1>
+<form method="post" class="row g-3" novalidate>
+  <div class="col-md-6">
+    <label for="nome" class="form-label">Nome *</label>
+    <input type="text" class="form-control" id="nome" name="nome" required>
+  </div>
+  <div class="col-md-6">
+    <label for="telefone" class="form-label">Telefone (WhatsApp) *</label>
+    <input type="tel" class="form-control" id="telefone" name="telefone" required
+           placeholder="18999998888" aria-describedby="telefoneAjuda">
+    <div id="telefoneAjuda" class="form-text">Somente números, com DDD.</div>
+  </div>
+  <div class="col-md-6">
+    <label for="email" class="form-label">E-mail</label>
+    <input type="email" class="form-control" id="email" name="email">
+  </div>
+  <div class="col-md-6">
+    <label for="curso_interesse" class="form-label">Curso de interesse</label>
+    <input type="text" class="form-control" id="curso_interesse" name="curso_interesse">
+  </div>
+  <div class="col-md-4">
+    <label for="origem" class="form-label">Origem</label>
+    <select class="form-select" id="origem" name="origem">
+      {% for o in origem_opcoes %}<option value="{{ o }}">{{ o }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-4">
+    <label for="temperatura" class="form-label">Temperatura</label>
+    <select class="form-select" id="temperatura" name="temperatura">
+      {% for t in temperatura_opcoes %}<option value="{{ t }}">{{ t }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-4">
+    <label for="polo_id" class="form-label">Polo</label>
+    <select class="form-select" id="polo_id" name="polo_id">
+      {% for polo in polos %}<option value="{{ polo.id }}">{{ polo.nome }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-12">
+    <button type="submit" class="btn btn-primary">Cadastrar lead</button>
+    <a href="{{ url_for('leads.listar') }}" class="btn btn-outline-secondary">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}{{ lead.nome }}{% endblock %}
+{% block content %}
+<nav aria-label="Trilha de navegação" class="mb-3">
+  <a href="{{ url_for('leads.listar') }}">&larr; Voltar para a lista de leads</a>
+</nav>
+
+<div class="row g-4">
+  <div class="col-md-4">
+    <h1 class="h4">{{ lead.nome }}</h1>
+    <p class="text-muted mb-3">{{ lead.telefone }} {% if lead.email %}· {{ lead.email }}{% endif %}</p>
+
+    <form method="post" action="{{ url_for('leads.atualizar', lead_id=lead.id) }}" class="mb-4">
+      <div class="mb-2">
+        <label for="status" class="form-label">Status</label>
+        <select class="form-select" id="status" name="status" data-confirmar-perdido="true">
+          {% for s in status_opcoes %}
+            <option value="{{ s }}" {% if lead.status == s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-2">
+        <label for="temperatura" class="form-label">Temperatura</label>
+        <select class="form-select" id="temperatura" name="temperatura">
+          {% for t in temperatura_opcoes %}
+            <option value="{{ t }}" {% if lead.temperatura == t %}selected{% endif %}>{{ t }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="proxima_acao_em" class="form-label">Próximo retorno</label>
+        <input type="date" class="form-control" id="proxima_acao_em" name="proxima_acao_em"
+               value="{{ lead.proxima_acao_em.isoformat() if lead.proxima_acao_em else '' }}">
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm">Salvar alterações</button>
+    </form>
+
+    <dl class="small text-muted">
+      <dt>Origem</dt><dd>{{ lead.origem }}</dd>
+      <dt>Curso de interesse</dt><dd>{{ lead.curso_interesse or "—" }}</dd>
+      <dt>Polo</dt><dd>{{ lead.polo.nome if lead.polo else "—" }}</dd>
+      <dt>Cadastrado em</dt><dd>{{ lead.criado_em.strftime("%d/%m/%Y %H:%M") }}</dd>
+    </dl>
+  </div>
+
+  <div class="col-md-8">
+    <h2 class="h5">Registrar nova interação</h2>
+    <form method="post" action="{{ url_for('leads.nova_interacao', lead_id=lead.id) }}" class="mb-4" id="formInteracao">
+      <div class="row g-2">
+        <div class="col-md-3">
+          <label for="canal" class="form-label visually-hidden">Canal</label>
+          <select class="form-select" id="canal" name="canal">
+            {% for c in canal_opcoes %}<option value="{{ c }}">{{ c|capitalize }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="col-md-7">
+          <label for="mensagem" class="form-label visually-hidden">Mensagem</label>
+          <textarea class="form-control" id="mensagem" name="mensagem" rows="2" required
+                    maxlength="1000" aria-describedby="contadorMensagem"></textarea>
+          <div id="contadorMensagem" class="form-text">0/1000 caracteres</div>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-success w-100">Registrar</button>
+        </div>
+      </div>
+    </form>
+
+    <h2 class="h5">Histórico de interações</h2>
+    <ol class="list-unstyled" aria-label="Linha do tempo de interações do lead">
+      {% for i in lead.interacoes %}
+      <li class="border rounded p-2 mb-2 {% if i.direcao == 'recebida' %}bg-light{% endif %}">
+        <div class="d-flex justify-content-between small text-muted">
+          <span>
+            {{ i.canal|capitalize }} · {{ "Recebida" if i.direcao == "recebida" else "Enviada" }}
+            {% if i.origem_automatica %}<span class="badge text-bg-secondary">auto</span>{% endif %}
+          </span>
+          <time datetime="{{ i.criado_em.isoformat() }}">{{ i.criado_em.strftime("%d/%m/%Y %H:%M") }}</time>
+        </div>
+        <p class="mb-0">{{ i.mensagem }}</p>
+      </li>
+      {% else %}
+      <li class="text-muted">Nenhuma interação registrada ainda.</li>
+      {% endfor %}
+    </ol>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

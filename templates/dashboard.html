@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">Dashboard comercial</h1>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card text-center h-100">
+      <div class="card-body">
+        <p class="text-muted mb-1 small">Total de leads</p>
+        <p class="display-6 mb-0">{{ total_leads }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center h-100">
+      <div class="card-body">
+        <p class="text-muted mb-1 small">Matriculados</p>
+        <p class="display-6 mb-0">{{ matriculados }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center h-100">
+      <div class="card-body">
+        <p class="text-muted mb-1 small">Taxa de conversão</p>
+        <p class="display-6 mb-0">{{ taxa_conversao }}%</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center h-100 {% if atrasados %}border-danger{% endif %}">
+      <div class="card-body">
+        <p class="text-muted mb-1 small">Retornos atrasados</p>
+        <p class="display-6 mb-0">{{ atrasados }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-4">
+    <h2 class="h5">Leads por status</h2>
+    <canvas id="graficoStatus" role="img" aria-label="Gráfico de barras mostrando a quantidade de leads em cada status"></canvas>
+  </div>
+  <div class="col-md-4">
+    <h2 class="h5">Leads por origem</h2>
+    <canvas id="graficoOrigem" role="img" aria-label="Gráfico de pizza mostrando a distribuição de leads por origem"></canvas>
+  </div>
+  <div class="col-md-4">
+    <h2 class="h5">Leads por polo</h2>
+    <canvas id="graficoPolo" role="img" aria-label="Gráfico de pizza mostrando a distribuição de leads por polo"></canvas>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/chartjs/chart.umd.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
